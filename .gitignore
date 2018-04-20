@@ -1,0 +1,6 @@
+.DS_Store
+.idea/
+config/local.settings.php
+vendor/
+web/
+private/

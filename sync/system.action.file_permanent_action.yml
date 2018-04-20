@@ -1,0 +1,13 @@
+uuid: c0784c70-4119-465f-8591-a3ce12672cfa
+langcode: en
+status: true
+dependencies:
+  module:
+    - file_entity
+_core:
+  default_config_hash: 6HXARkHRitWPks1LdsgkkHFAYOnkji_xcrWUfK31r1U
+id: file_permanent_action
+label: 'Set file status to permanent'
+type: file
+plugin: file_permanent_action
+configuration: {  }

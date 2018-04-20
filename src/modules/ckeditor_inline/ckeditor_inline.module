@@ -1,0 +1,121 @@
+<?php
+
+use Drupal\node\Entity\Node;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\block\Entity\Block;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Access\AccessResult;
+use \Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_page_attachments().
+ * 
+ * Add inline editor libraries on all pages
+ * 
+ * @TODO: We could limit this to just node view pages 
+ */
+function ckeditor_inline_page_attachments(array &$attachments) {
+  $current_theme = \Drupal::theme()->getActiveTheme()->getName();
+  $default_theme = $config = \Drupal::config('system.theme')->get('default');
+  if (\Drupal::currentUser()->hasPermission('use inline editor') && $current_theme == $default_theme) {
+    $attachments['#attached']['library'][] = 'ckeditor_inline/ckeditor_inline';
+    $attachments['#attached']['drupalSettings']['pluginPath'] = '/' . drupal_get_path('module', 'ckeditor_inline') . '/ckeditor/plugins/';
+  }
+}
+
+/**
+ * Implements hook_preprocess_html().
+ * 
+ * Add data fields to body tag so editor can find UUID and node type
+ * 
+ * @param type $variables
+ */
+function ckeditor_inline_preprocess_html(&$variables) {
+  $route = \Drupal::service('current_route_match');
+  if ($route->getRouteName() == 'entity.node.canonical'){
+    $node = $route->getParameter('node');
+    $node_type = $node->getType();
+    if ($node_type == 'article') {
+      $variables['attributes']['data-uuid'] = $node->uuid();
+      $variables['attributes']['data-node-type'] = $node_type;
+    }
+  }
+}
+
+/**
+ * Implements hook_entity_presave().
+ * 
+ * For images save width and height in attached fields.
+ * For nodes to be edited make sure the display field and body field are 
+ * not empty but content placeholders.
+ * 
+ * @param EntityInterface $entity
+ */
+function ckeditor_inline_entity_presave(EntityInterface $entity) {
+  if ($entity->getEntityType()->id() == 'file' && substr($entity->getMimeType(), 0, 5)  == 'image') {
+    // Save width and height in image fields so they are available to editor
+    $uri = $entity->getFileUri();
+    $image = \Drupal::service('image.factory')->get($uri);
+    $entity->field_image_width = $image->getWidth();
+    $entity->field_image_height = $image->getHeight();
+  }
+  else if ($entity->getEntityType()->id() == 'node' ) {
+    // Make sure display title and body fields have placeholder set
+    if ($entity->hasField('field_display_title') && $entity->get('field_display_title')->isEmpty()) {
+      $entity->field_display_title = $entity->title;
+    }
+    if ($entity->hasField('body') && $entity->get('body')->isEmpty()) {
+      $entity->body = t('Type something here ...');
+    }
+  }
+}
+
+/**
+ * Implements hook_block_access
+ * 
+ * Do not show tabs on node view page if user using inline editor.
+ * 
+ * @param \Drupal\block\Entity\Block $block
+ * @param type $operation
+ * @param \Drupal\Core\Session\AccountInterface $account
+ * @return type
+ */
+function ckeditor_inline_block_access(Block $block, $operation, AccountInterface $account) {
+  if ($operation == 'view' && $block->getPluginId() == 'local_tasks_block') {
+    $route = \Drupal::service('current_route_match');
+    if ($route->getRouteName() == 'entity.node.canonical'){
+      $node = $route->getParameter('node');
+      $node_type = $node->getType();
+      if ($node_type == 'article') {
+        $plugin = $block->getPluginId();
+        if (\Drupal::currentUser()->hasPermission('use inline editor')) {
+          return AccessResult::forbidden()->cachePerPermissions();
+        }
+      }
+    }
+  }
+  return AccessResult::neutral()->cachePerPermissions();
+}
+
+/**
+ * Implements hook_form_alter().
+ * 
+ * Hide body, display title and image fields if creating or editing an article.
+ * 
+ * @param type $form
+ * @param FormStateInterface $form_state
+ * @param type $form_id
+ */
+function ckeditor_inline_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if (isset($form['#form_id'])) {
+    if ($form['#form_id'] == 'node_article_form' || $form['#form_id'] == 'node_article_edit_form') {
+      if (\Drupal::currentUser()->hasPermission('use inline editor')) {
+        if (!\Drupal::currentUser()->hasPermission('show wysiwyg editor')) {
+         $form['body']['#access'] = FALSE;
+         $form['field_display_title']['#access'] = FALSE;
+         $form['field_image']['#access'] = FALSE;
+        }
+      }
+    }
+  }
+}

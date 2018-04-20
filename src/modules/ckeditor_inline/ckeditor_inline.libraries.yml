@@ -1,0 +1,8 @@
+ckeditor_inline:
+  js:
+    /libraries/ckeditor/ckeditor.js: {}
+    /libraries/ckeditor/adapters/jquery.js: {}
+    js/ckeditor_inline.js: {}
+  css:
+    theme:
+      css/ckeditor_inline.css: {} 
