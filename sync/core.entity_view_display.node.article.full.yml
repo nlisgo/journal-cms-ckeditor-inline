@@ -1,8 +1,9 @@
-uuid: 83a7186f-9aae-4792-b9ab-98b852479661
+uuid: 8230998a-fe6c-4db6-bf32-cc75777dce05
 langcode: en
 status: true
 dependencies:
   config:
+    - core.entity_view_mode.node.full
     - field.field.node.article.body
     - field.field.node.article.field_display_title
     - field.field.node.article.field_image
@@ -12,10 +13,10 @@ dependencies:
     - user
 _core:
   default_config_hash: ChmU3AVqDKU32A_fyChG0W9dTRKmVBR58B6OClCLvZI
-id: node.article.default
+id: node.article.full
 targetEntityType: node
 bundle: article
-mode: default
+mode: full
 content:
   body:
     type: text_default

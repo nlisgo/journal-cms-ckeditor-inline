@@ -1,7 +1,9 @@
-uuid: 9fb92099-7daa-4261-b321-62855796f949
+uuid: 979043cd-56b2-4fad-9633-786633aeb67d
 langcode: en
 status: true
 dependencies:
+  module:
+    - node
   theme:
     - bartik
 _core:
@@ -9,7 +11,7 @@ _core:
 id: bartik_page_title
 theme: bartik
 region: content
-weight: -50
+weight: -4
 provider: null
 plugin: page_title_block
 settings:
@@ -17,4 +19,11 @@ settings:
   label: 'Page title'
   provider: core
   label_display: '0'
-visibility: {  }
+visibility:
+  node_type:
+    id: node_type
+    bundles:
+      page: page
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'

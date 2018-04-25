@@ -1,4 +1,4 @@
-uuid: ae5f256b-1fe8-432b-882d-14ec1154de42
+uuid: 538c27a3-3e37-484a-86c3-04aef56b05a8
 langcode: en
 status: true
 dependencies:
@@ -16,7 +16,7 @@ filters:
     status: true
     weight: -10
     settings:
-      allowed_html: '<a href hreflang> <em> <strong> <cite> <blockquote cite> <code> <ul type> <ol start type> <li> <dl> <dt> <dd> <h2 id> <h3 id> <h4 id> <h5 id> <h6 id> <p> <br> <span> <img src alt height width data-entity-type data-entity-uuid data-align data-caption>'
+      allowed_html: '<a href hreflang class=""> <em> <strong> <cite> <blockquote cite> <code> <ul type> <ol start type> <li> <dl> <dt> <dd> <h2 id> <h3 id> <h4 id> <h5 id> <h6 id> <p> <br> <span> <img src alt height width data-entity-type data-entity-uuid data-align data-caption data-fid data-uuid class=""> <s> <sup> <sub> <figure class=""> <figcaption> <div class=""> <iframe src width height> <elifebutton data-href class=""> <oembed class="">'
       filter_html_help: false
       filter_html_nofollow: false
   filter_align:

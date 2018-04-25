@@ -1,6 +1,6 @@
-uuid: 783aa605-baad-49c7-8540-306a44920d36
-name: 'Drush Site-Install'
-mail: admin@example.com
+uuid: c611995f-a456-4594-bc85-9ce27b4bafc6
+name: 'CKEditor Inline'
+mail: journal@elife.com
 slogan: ''
 page:
   403: ''
