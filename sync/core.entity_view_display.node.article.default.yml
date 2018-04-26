@@ -32,5 +32,7 @@ content:
     type: text_default
     region: content
 hidden:
+  comment: true
   field_image: true
+  field_tags: true
   links: true
