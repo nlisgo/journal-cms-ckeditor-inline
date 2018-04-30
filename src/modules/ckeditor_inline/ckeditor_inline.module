@@ -61,8 +61,13 @@ function ckeditor_inline_entity_presave(EntityInterface $entity) {
   }
   else if ($entity->getEntityType()->id() == 'node' ) {
     // Make sure display title and body fields have placeholder set
-    if ($entity->hasField('field_display_title') && $entity->get('field_display_title')->isEmpty()) {
-      $entity->field_display_title = $entity->title;
+    if ($entity->hasField('field_display_title')) {
+      if ($entity->get('field_display_title')->isEmpty()) {
+        $entity->field_display_title = $entity->title;
+      }
+      else {
+        $entity->title = $entity->get('field_display_title')->getValue()[0]['value'];
+      }
     }
     if ($entity->hasField('body') && $entity->get('body')->isEmpty()) {
       $entity->body = t('Type something here ...');
@@ -107,15 +112,30 @@ function ckeditor_inline_block_access(Block $block, $operation, AccountInterface
  * @param type $form_id
  */
 function ckeditor_inline_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  if (isset($form['#form_id'])) {
-    if ($form['#form_id'] == 'node_article_form' || $form['#form_id'] == 'node_article_edit_form') {
-      if (\Drupal::currentUser()->hasPermission('use inline editor')) {
-        if (!\Drupal::currentUser()->hasPermission('show wysiwyg editor')) {
-         $form['body']['#access'] = FALSE;
-         $form['field_display_title']['#access'] = FALSE;
-         $form['field_image']['#access'] = FALSE;
-        }
-      }
-    }
+  if ($form_id == 'node_article_edit_form') {
+    $form['display_title'] = [
+      '#type' => 'markup',
+      '#markup' => '<h1>' . $form['title']['widget'][0]['value']['#default_value'] . '</h1>',
+    ];
+    $form['title']['widget'][0]['value']['#access'] = FALSE;
+    $form['field_content_json']['#disabled'] = TRUE;
+  }
+
+  if ($form_id == 'node_article_form') {
+    $form['field_content_json']['#access'] = FALSE;
+  }
+}
+
+/**
+ * Implements hook_node_presave().
+ */
+function ckeditor_inline_node_presave(Node $node) {
+  if ($node->hasField('field_content_json') && $node->hasField('body')) {
+    /** @var \Drupal\ckeditor_inline\HtmlJsonSerializer */
+    $normalizer = \Drupal::service('ckeditor_inline.html_json_normalizer');
+    $body = $node->get('body')->getValue();
+    $body[0]['value'] = preg_replace('~[\s\n]*<p>&nbsp;</p>~', '', $body[0]['value']);
+    $node->field_content_json = json_encode($normalizer->normalize($body[0]['value']), JSON_PRETTY_PRINT);
+    $node->body = $body;
   }
 }

@@ -26,11 +26,15 @@
         "drupal/jsonapi": "1.7",
         "drupal/jsonapi_file": "^1.1",
         "drush/drush": "^9.0.0",
+        "league/commonmark": "^0.17.5",
+        "league/html-to-markdown": "^4.6",
+        "symfony/serializer": "^3.4",
         "vlucas/phpdotenv": "^2.4",
         "webflo/drupal-finder": "^1.0.0",
         "webmozart/path-util": "^2.3"
     },
     "require-dev": {
+        "phpunit/phpunit": "^6.5",
         "webflo/drupal-core-require-dev": "~8.5.1"
     },
     "conflict": {
@@ -73,6 +77,11 @@
             "web/profiles/contrib/{$name}": ["type:drupal-profile"],
             "web/themes/contrib/{$name}": ["type:drupal-theme"],
             "drush/contrib/{$name}": ["type:drupal-drush"]
+        },
+        "patches": {
+            "league/html-to-markdown": {
+                "Add newlines after code block": "./src/patches/league--html-to-markdown-148.patch"
+            }
         }
     }
 }

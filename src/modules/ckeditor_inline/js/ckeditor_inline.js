@@ -66,20 +66,21 @@
             {"name": 'styles'}
           ],
           imageUploadUrl: '/jsonapi/file/image',
-          removeButtons: 'Underline,Anchor,SpecialChar,HorizontalRule,ImageAlignLeft,ImageAlignRight,ImageFullWidth,Styles',
-          image2_alignClasses: [ 'align-left', 'align-center', 'align-right' ],
+          removeButtons: 'Underline,Strike,Anchor,SpecialChar,HorizontalRule,ImageAlignLeft,ImageAlignRight,ImageFullWidth,Styles',
+          image2_alignClasses: [ 'align-center' ],
           image2_disableResizer: true,
           extraAllowedContent: 'elifebutton[data-href](elife-button--default,elife-button--outline);oembed(align-left,align-right,align-center);figure;figcaption;iframe[!src,width,height];img[data-fid,data-uuid]',
-          format_tags: 'p;h2;h3',
+          format_tags: 'p;h1;h2',
           embed_provider: '//ckeditor.iframe.ly/api/oembed?url={url}&callback={callback}',
           autoEmbed_widget: 'embedVideo'
         };
 
         var titleEditorOptions = {
            toolbarGroups: [
-            {"name":"basicstyles","groups":["basicstyles"]}
+             {"name":"basicstyles","groups":["basicstyles"]},
+             {"name":"links","groups":["links"]}
            ],
-           removeButtons: 'Underline,Superscript,Subscript'
+           removeButtons: 'Underline,Strike,Anchor'
         };
 
         var ajaxOptions = {

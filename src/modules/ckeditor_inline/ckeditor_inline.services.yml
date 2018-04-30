@@ -1,0 +1,21 @@
+services:
+  ckeditor_inline.html_converter:
+    class: League\HTMLToMarkdown\HtmlConverter
+  ckeditor_inline.html_md_normalizer:
+    class: Drupal\ckeditor_inline\HtmlMarkdownSerializer
+    arguments: ['@ckeditor_inline.html_converter']
+  ckeditor_inline.environment:
+    class: League\CommonMark\Environment
+    factory: League\CommonMark\Environment::createCommonMarkEnvironment
+  ckeditor_inline.html_renderer:
+    class: League\CommonMark\HtmlRenderer
+    arguments: ['@ckeditor_inline.environment']
+  ckeditor_inline.doc_parser:
+    class: League\CommonMark\DocParser
+    arguments: ['@ckeditor_inline.environment']
+  ckeditor_inline.md_json_normalizer:
+    class: Drupal\ckeditor_inline\MarkdownJsonSerializer
+    arguments: ['@ckeditor_inline.html_renderer']
+  ckeditor_inline.html_json_normalizer:
+    class: Drupal\ckeditor_inline\HtmlJsonSerializer
+    arguments: ['@ckeditor_inline.html_md_normalizer', '@ckeditor_inline.md_json_normalizer', '@ckeditor_inline.doc_parser']
