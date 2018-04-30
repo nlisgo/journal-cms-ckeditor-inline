@@ -7,7 +7,7 @@ dependencies:
     - field.field.node.article.field_content_json
     - field.field.node.article.field_display_title
     - field.field.node.article.field_image
-    - field.field.node.article.field_tags
+    - field.field.node.article.field_subject
     - node.type.article
   module:
     - text
@@ -37,5 +37,5 @@ hidden:
   comment: true
   field_content_json: true
   field_image: true
-  field_tags: true
+  field_subject: true
   links: true

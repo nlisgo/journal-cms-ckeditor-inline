@@ -5,7 +5,8 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\block\Entity\Block;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Access\AccessResult;
-use \Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\node\NodeInterface;
 
 /**
  * Implements hook_page_attachments().
@@ -26,11 +27,9 @@ function ckeditor_inline_page_attachments(array &$attachments) {
 /**
  * Implements hook_preprocess_html().
  * 
- * Add data fields to body tag so editor can find UUID and node type
- * 
- * @param type $variables
+ * Add data fields to body tag so editor can find UUID and node type.
  */
-function ckeditor_inline_preprocess_html(&$variables) {
+function ckeditor_inline_preprocess_html(array &$variables) {
   $route = \Drupal::service('current_route_match');
   if ($route->getRouteName() == 'entity.node.canonical'){
     $node = $route->getParameter('node');
@@ -48,25 +47,23 @@ function ckeditor_inline_preprocess_html(&$variables) {
  * For images save width and height in attached fields.
  * For nodes to be edited make sure the display field and body field are 
  * not empty but content placeholders.
- * 
- * @param EntityInterface $entity
  */
 function ckeditor_inline_entity_presave(EntityInterface $entity) {
-  if ($entity->getEntityType()->id() == 'file' && substr($entity->getMimeType(), 0, 5)  == 'image') {
-    // Save width and height in image fields so they are available to editor
+  if ($entity->getEntityType()->id() == 'file' && strpos($entity->getMimeType(), 'image') === 0) {
+    // Save width and height in image fields so they are available to editor.
     $uri = $entity->getFileUri();
     $image = \Drupal::service('image.factory')->get($uri);
     $entity->field_image_width = $image->getWidth();
     $entity->field_image_height = $image->getHeight();
   }
   else if ($entity->getEntityType()->id() == 'node' ) {
-    // Make sure display title and body fields have placeholder set
+    // Make sure display title and body fields have placeholder set.
     if ($entity->hasField('field_display_title')) {
       if ($entity->get('field_display_title')->isEmpty()) {
         $entity->field_display_title = $entity->title;
       }
       else {
-        $entity->title = $entity->get('field_display_title')->getValue()[0]['value'];
+        $entity->title = strip_tags($entity->get('field_display_title')->getValue()[0]['value']);
       }
     }
     if ($entity->hasField('body') && $entity->get('body')->isEmpty()) {
@@ -76,26 +73,18 @@ function ckeditor_inline_entity_presave(EntityInterface $entity) {
 }
 
 /**
- * Implements hook_block_access
+ * Implements hook_block_access().
  * 
  * Do not show tabs on node view page if user using inline editor.
- * 
- * @param \Drupal\block\Entity\Block $block
- * @param type $operation
- * @param \Drupal\Core\Session\AccountInterface $account
- * @return type
  */
-function ckeditor_inline_block_access(Block $block, $operation, AccountInterface $account) {
+function ckeditor_inline_block_access(Block $block, string $operation, AccountInterface $account) {
   if ($operation == 'view' && $block->getPluginId() == 'local_tasks_block') {
     $route = \Drupal::service('current_route_match');
     if ($route->getRouteName() == 'entity.node.canonical'){
+      /** @var NodeInterface $node */
       $node = $route->getParameter('node');
-      $node_type = $node->getType();
-      if ($node_type == 'article') {
-        $plugin = $block->getPluginId();
-        if (\Drupal::currentUser()->hasPermission('use inline editor')) {
-          return AccessResult::forbidden()->cachePerPermissions();
-        }
+      if ($node->getType() == 'article' && \Drupal::currentUser()->hasPermission('use inline editor')) {
+        return AccessResult::forbidden()->cachePerPermissions();
       }
     }
   }
@@ -106,10 +95,6 @@ function ckeditor_inline_block_access(Block $block, $operation, AccountInterface
  * Implements hook_form_alter().
  * 
  * Hide body, display title and image fields if creating or editing an article.
- * 
- * @param type $form
- * @param FormStateInterface $form_state
- * @param type $form_id
  */
 function ckeditor_inline_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   if ($form_id == 'node_article_edit_form') {
@@ -122,7 +107,19 @@ function ckeditor_inline_form_alter(&$form, FormStateInterface $form_state, $for
   }
 
   if ($form_id == 'node_article_form') {
+    $form['title']['widget'][0]['value']['#access'] = FALSE;
     $form['field_content_json']['#access'] = FALSE;
+  }
+}
+
+/**
+ * Implements hook_node_create().
+ */
+function ckeditor_inline_node_create(NodeInterface $node) {
+  switch ($node->getType()) {
+    case 'article':
+      $node->title = t('Title');
+      break;
   }
 }
 

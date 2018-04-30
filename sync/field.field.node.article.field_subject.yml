@@ -1,0 +1,29 @@
+uuid: 2f369928-d765-432c-9185-a01ebc55cf57
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_subject
+    - node.type.article
+    - taxonomy.vocabulary.subjects
+id: node.article.field_subject
+field_name: field_subject
+entity_type: node
+bundle: article
+label: 'Research category'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      subjects: subjects
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference
