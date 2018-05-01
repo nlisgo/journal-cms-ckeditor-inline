@@ -1,0 +1,23 @@
+uuid: 143617b7-0c34-43ee-8950-01419f44e00a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_community_list
+    - node.type.article
+id: node.article.field_community_list
+field_name: field_community_list
+entity_type: node
+bundle: article
+label: 'Include in community'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

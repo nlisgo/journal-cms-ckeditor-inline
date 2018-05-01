@@ -8,7 +8,7 @@
     attach: function(context, settings) {
       
       // Make sure we have the body to process
-      if ($(' .node__content .field--name-body', context).length > 0){
+      if ($(' .node__content .field--name-body', context).length > 0) {
         
         // Takes in two CKEditor Node Lists containing images
         // and finds any uuid of images that are no longer
@@ -42,9 +42,11 @@
 
         var $content = $(' .node__content .field--name-body');
         var $title = $('.node__content .field--name-field-display-title');
+        var $impact = $('.node__content .field--name-field-impact-statement');
 
         $content.attr('contenteditable', true);
         $title.attr('contenteditable', true);
+        $impact.attr('contenteditable', true);
         
         var uuid = false, url, data, options, node_type;
 
@@ -96,6 +98,7 @@
         if (uuid) {
           var bodyEditor = $content.ckeditor(bodyEditorOptions).editor;
           var titleEditor = $title.ckeditor(titleEditorOptions).editor;
+          var impactEditor = $impact.ckeditor(titleEditorOptions).editor;
 
           bodyEditor.on( 'instanceReady', function(ck) {
             var editable = bodyEditor.editable(), images = editable.find('img');
@@ -242,6 +245,31 @@
                     }
                   }
                 }            
+              };
+              options = $.extend({}, ajaxOptions, {data: JSON.stringify(data)});
+              $.ajax(options);
+            });
+          });
+
+          // Impact field editor
+          impactEditor.on( 'instanceReady', function(ck) {
+            // Remove items from context menus
+            impactEditor.removeMenuItem('paste');
+
+            // Save title when title editor looses focus
+            impactEditor.on('blur', function(e){
+              var impact = impactEditor.getData();
+              data = {
+                data: {
+                  type: "node--" + node_type,
+                  id: uuid,
+                  attributes: {
+                    field_impact_statement: {
+                      value: impact,
+                      format: 'basic_html'
+                    }
+                  }
+                }
               };
               options = $.extend({}, ajaxOptions, {data: JSON.stringify(data)});
               $.ajax(options);

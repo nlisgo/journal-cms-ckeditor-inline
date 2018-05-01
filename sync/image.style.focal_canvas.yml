@@ -1,0 +1,15 @@
+uuid: 67ec1795-e527-4078-9bed-4affe782ca9b
+langcode: en
+status: true
+dependencies: {  }
+name: focal_canvas
+label: 'Focal canvas'
+effects:
+  bb02dc66-1809-4aa6-a074-e2d10857c14a:
+    uuid: bb02dc66-1809-4aa6-a074-e2d10857c14a
+    id: image_scale
+    weight: 1
+    data:
+      width: 150
+      height: 150
+      upscale: false

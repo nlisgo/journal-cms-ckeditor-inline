@@ -66,6 +66,9 @@ function ckeditor_inline_entity_presave(EntityInterface $entity) {
         $entity->title = strip_tags($entity->get('field_display_title')->getValue()[0]['value']);
       }
     }
+    if ($entity->hasField('field_impact_statement') && $entity->get('field_impact_statement')->isEmpty()) {
+      $entity->field_impact_statement = t('Impact statement');
+    }
     if ($entity->hasField('body') && $entity->get('body')->isEmpty()) {
       $entity->body = t('Type something here ...');
     }
@@ -98,10 +101,6 @@ function ckeditor_inline_block_access(Block $block, string $operation, AccountIn
  */
 function ckeditor_inline_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   if ($form_id == 'node_article_edit_form') {
-    $form['display_title'] = [
-      '#type' => 'markup',
-      '#markup' => '<h1>' . $form['title']['widget'][0]['value']['#default_value'] . '</h1>',
-    ];
     $form['title']['widget'][0]['value']['#access'] = FALSE;
     $form['field_content_json']['#disabled'] = TRUE;
   }

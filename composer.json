@@ -23,6 +23,7 @@
         "drupal/config_installer": "^1.7",
         "drupal/console": "^1.0.2",
         "drupal/core": "~8.5.1",
+        "drupal/focal_point": "^1.0@beta",
         "drupal/jsonapi": "1.7",
         "drupal/jsonapi_file": "^1.1",
         "drush/drush": "^9.0.0",
