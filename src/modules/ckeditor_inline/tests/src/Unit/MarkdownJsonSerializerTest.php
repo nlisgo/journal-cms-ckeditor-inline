@@ -3,19 +3,23 @@
 namespace Drupal\Tests\ckeditor_inline\Unit;
 
 use Drupal\ckeditor_inline\MarkdownJsonSerializer;
+use Drupal\Core\File\MimeType\MimeTypeGuesser;
+use Drupal\Core\StreamWrapper\StreamWrapperManager;
 use League\CommonMark\Block\Element\Document;
 use League\CommonMark\DocParser;
 use League\CommonMark\Environment;
 use League\CommonMark\HtmlRenderer;
+use Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesserInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class MarkdownJsonSerializerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var MarkdownJsonSerializer */
     private $normalizer;
-
     /** @var DocParser */
     private $docParser;
+    /** @var \Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesserInterface */
+    private $mimeTypeGuesser;
 
     /**
      * @before
@@ -23,7 +27,8 @@ class MarkdownJsonSerializerTest extends \PHPUnit\Framework\TestCase
     protected function setUpNormalizer()
     {
         $environment = Environment::createCommonMarkEnvironment();
-        $this->normalizer = new MarkdownJsonSerializer(new HtmlRenderer($environment));
+        $this->mimeTypeGuesser = $this->createMock(MimeTypeGuesserInterface::class);
+        $this->normalizer = new MarkdownJsonSerializer(new HtmlRenderer($environment), $this->mimeTypeGuesser);
         $this->docParser = new DocParser($environment);
     }
 
@@ -58,8 +63,15 @@ class MarkdownJsonSerializerTest extends \PHPUnit\Framework\TestCase
      * @test
      * @dataProvider normalizeProvider
      */
-    public function it_will_normalize_documents(array $expected, string $markdown)
+    public function it_will_normalize_documents(array $expected, string $markdown, array $mimeTypeGuesses = [])
     {
+        foreach ($mimeTypeGuesses as $uri => $mimeType) {
+            $this->mimeTypeGuesser
+                ->expects($this->once())
+                ->method('guess')
+                ->with($uri)
+                ->willReturn($mimeType);
+        }
         $this->assertEquals($expected, $this->normalizer->normalize($this->createDocument($markdown)));
     }
 
@@ -78,6 +90,34 @@ class MarkdownJsonSerializerTest extends \PHPUnit\Framework\TestCase
                     ],
                 ],
                 'Single paragraph',
+            ],
+            'single image' => [
+                [
+                    [
+                        'type' => 'image',
+                        'image' => [
+                            'uri' => 'https://iiif.elifesciences.org/journal-cms:editor-images/image-20180501122413-1.jpeg',
+                            'alt' => 'Alt text',
+                            'source' => [
+                                'mediaType' => 'image/jpeg',
+                                'uri' => 'https://iiif.elifesciences.org/journal-cms:editor-images/image-20180501122413-1.jpeg/full/full/0/default.jpg',
+                                'filename' => 'image-20180501122413-1.jpeg',
+                            ],
+                            'size' => [
+                                'width' => 2500,
+                                'height' => 1562,
+                            ],
+                            'focalPoint' => [
+                                'x' => 50,
+                                'y' => 50,
+                            ],
+                        ],
+                    ],
+                ],
+                "<figure alt=\"Alt text\" class=\"image\" data-fid=\"123\" data-uuid=\"UUID\" height=\"1562\" src=\"/sites/default/files/editor-images/image-20180501122413-1.jpeg\" title=\"Image title\" width=\"2500\">![Alt text](/sites/default/files/editor-images/image-20180501122413-1.jpeg \"Image title\")<figcaption>Caption</figcaption></figure>",
+                [
+                    'public://sites/default/files/editor-images/image-20180501122413-1.jpeg' => 'image/jpeg',
+                ],
             ],
             'single table' => [
                 [

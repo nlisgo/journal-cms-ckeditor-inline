@@ -66,6 +66,10 @@ class HtmlMarkdownSerializerTest extends \PHPUnit\Framework\TestCase
                 'Single paragraph',
                 '<p>Single paragraph</p>',
             ],
+            'single image' => [
+                "<figure alt=\"Alt text\" class=\"image\" data-fid=\"123\" data-uuid=\"UUID\" height=\"1562\" src=\"/sites/default/files/editor-images/image-20180501122413-1.jpeg\" title=\"Image title\" width=\"2500\">![Alt text](/sites/default/files/editor-images/image-20180501122413-1.jpeg \"Image title\")<figcaption>Caption</figcaption></figure>",
+                "<figure class=\"image\">\n<img alt=\"Alt text\" title=\"Image title\" data-fid=\"123\" data-uuid=\"UUID\" height=\"1562\" src=\"/sites/default/files/editor-images/image-20180501122413-1.jpeg\" width=\"2500\" />\n<figcaption>Caption</figcaption>\n</figure>"
+            ],
             'single table' => [
                 '<table><tr><td>Cell one</td></tr></table>',
                 '<table><tr><td>Cell one</td></tr></table>',
@@ -81,7 +85,7 @@ class HtmlMarkdownSerializerTest extends \PHPUnit\Framework\TestCase
                 ], 2),
             ],
             'table multiple lines' => [
-                '<table><tr><td>Cell one</td></tr></table>',
+                '<table> <tr> <td> Cell one </td></tr></table>',
                 $this->lines([
                     '<table>',
                     '  <tr>',

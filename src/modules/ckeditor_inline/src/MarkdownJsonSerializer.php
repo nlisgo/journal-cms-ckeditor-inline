@@ -5,17 +5,21 @@ namespace Drupal\ckeditor_inline;
 use League\CommonMark\Block\Element;
 use League\CommonMark\ElementRendererInterface;
 use League\CommonMark\Node\Node;
+use PHPHtmlParser\Dom;
+use Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesserInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 final class MarkdownJsonSerializer implements NormalizerInterface
 {
 
     private $htmlRenderer;
+    private $mimeTypeGuesser;
     private $depthOffset = null;
 
-    public function __construct(ElementRendererInterface $htmlRenderer)
+    public function __construct(ElementRendererInterface $htmlRenderer, MimeTypeGuesserInterface $mimeTypeGuesser)
     {
         $this->htmlRenderer = $htmlRenderer;
+        $this->mimeTypeGuesser = $mimeTypeGuesser;
     }
 
     /**
@@ -88,6 +92,59 @@ final class MarkdownJsonSerializer implements NormalizerInterface
                         return [
                             'type' => 'table',
                             'tables' => [$contents],
+                        ];
+                    } elseif (preg_match('/^<figure.*<\/figure>/', $contents)) {
+                        $dom = new Dom();
+                        $dom->setOptions([
+                            'preserveLineBreaks' => true,
+                        ]);
+                        $dom->load($contents);
+                        /** @var \PHPHtmlParser\Dom\HtmlNode $figure */
+                        $figure = $dom->find('figure')[0];
+                        $uri = ltrim($figure->getAttribute('src'), '/');
+                        if (strpos($uri, 'http') !== 0) {
+                            $uri = 'public://'.$uri;
+                        }
+                        $filemime = $this->mimeTypeGuesser->guess($uri);
+                        if ($filemime == 'image/png') {
+                            $filemime = 'image/jpeg';
+                            $uri = preg_replace('/\.png$/', '.jpg', $uri);
+                        }
+
+                        if (strpos($uri, 'public://') === 0) {
+                            $uri = preg_replace(['~^public://~', '~:sites/default/files/~'], ['https://iiif.elifesciences.org/journal-cms:', ':'], $uri);
+                        }
+                        switch ($filemime) {
+                            case 'image/gif':
+                                $ext = 'gif';
+                                break;
+
+                            case 'image/png':
+                                $ext = 'png';
+                                break;
+
+                            default:
+                                $ext = 'jpg';
+                        }
+                        return [
+                            'type' => 'image',
+                            'image' => array_filter([
+                                'uri' => $uri,
+                                'alt' => $figure->getAttribute('alt') ?? null,
+                                'source' => [
+                                    'mediaType' => $filemime,
+                                    'uri' => $uri.'/full/full/0/default.'.$ext,
+                                    'filename' => basename($uri),
+                                ],
+                                'size' => [
+                                    'width' => $figure->getAttribute('width'),
+                                    'height' => $figure->getAttribute('height'),
+                                ],
+                                'focalPoint' => [
+                                    'x' => 50,
+                                    'y' => 50,
+                                ],
+                            ]),
                         ];
                     }
                 }
