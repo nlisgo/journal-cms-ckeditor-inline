@@ -3,8 +3,6 @@
 namespace Drupal\Tests\ckeditor_inline\Unit;
 
 use Drupal\ckeditor_inline\MarkdownJsonSerializer;
-use Drupal\Core\File\MimeType\MimeTypeGuesser;
-use Drupal\Core\StreamWrapper\StreamWrapperManager;
 use League\CommonMark\Block\Element\Document;
 use League\CommonMark\DocParser;
 use League\CommonMark\Environment;
@@ -112,6 +110,7 @@ class MarkdownJsonSerializerTest extends \PHPUnit\Framework\TestCase
                                 'y' => 50,
                             ],
                         ],
+                        'title' => 'Caption',
                     ],
                 ],
                 "<figure alt=\"Alt text\" class=\"image\" data-fid=\"123\" data-uuid=\"UUID\" height=\"1562\" src=\"/sites/default/files/editor-images/image-20180501122413-1.jpeg\" title=\"Image title\" width=\"2500\">![Alt text](/sites/default/files/editor-images/image-20180501122413-1.jpeg \"Image title\")<figcaption>Caption</figcaption></figure>",

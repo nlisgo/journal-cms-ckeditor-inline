@@ -9,12 +9,15 @@ use League\CommonMark\DocParser;
 use League\CommonMark\Environment;
 use League\CommonMark\HtmlRenderer;
 use League\HTMLToMarkdown\HtmlConverter;
+use Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesserInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class HtmlJsonSerializerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var HtmlJsonSerializer */
     private $normalizer;
+    /** @var \Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesserInterface */
+    private $mimeTypeGuesser;
 
     /**
      * @before
@@ -22,7 +25,8 @@ class HtmlJsonSerializerTest extends \PHPUnit\Framework\TestCase
     protected function setUpNormalizer()
     {
         $environment = Environment::createCommonMarkEnvironment();
-        $this->normalizer = new HtmlJsonSerializer(new HtmlMarkdownSerializer(new HtmlConverter()), new MarkdownJsonSerializer(new HtmlRenderer($environment)), new DocParser($environment));
+        $this->mimeTypeGuesser = $this->createMock(MimeTypeGuesserInterface::class);
+        $this->normalizer = new HtmlJsonSerializer(new HtmlMarkdownSerializer(new HtmlConverter()), new MarkdownJsonSerializer(new HtmlRenderer($environment), $this->mimeTypeGuesser), new DocParser($environment));
     }
 
     /**
@@ -56,8 +60,15 @@ class HtmlJsonSerializerTest extends \PHPUnit\Framework\TestCase
      * @test
      * @dataProvider normalizeProvider
      */
-    public function it_will_normalize_html(array $expected, string $html)
+    public function it_will_normalize_html(array $expected, string $html, array $mimeTypeGuesses = [])
     {
+        foreach ($mimeTypeGuesses as $uri => $mimeType) {
+            $this->mimeTypeGuesser
+                ->expects($this->once())
+                ->method('guess')
+                ->with($uri)
+                ->willReturn($mimeType);
+        }
         $this->assertEquals($expected, $this->normalizer->normalize($html));
     }
 
@@ -72,10 +83,10 @@ class HtmlJsonSerializerTest extends \PHPUnit\Framework\TestCase
                 [
                     [
                         'type' => 'paragraph',
-                        'text' => 'Single paragraph',
+                        'text' => '<strong>Single</strong> paragraph',
                     ],
                 ],
-                '<p>Single paragraph</p>',
+                '<p><strong>Single</strong> paragraph</p>',
             ],
             'single table' => [
                 [
@@ -89,10 +100,34 @@ class HtmlJsonSerializerTest extends \PHPUnit\Framework\TestCase
                 '<table><tr><td>Cell one</td></tr></table>',
             ],
             'simple figure' => [
-                [],
-                "<figure class=\"image\"><img alt=\"\" data-fid=\"5\" data-uuid=\"7a57b3eb-60b3-4063-b06d-defff7fa0865\" height=\"undefined\" src=\"/sites/default/files/editor-images/image-20180427145110-1.jpeg\" width=\"undefined\" />
+                [
+                    [
+                        'type' => 'image',
+                        'image' => [
+                            'uri' => 'https://iiif.elifesciences.org/journal-cms:editor-images/image-20180427145110-1.jpeg',
+                            'source' => [
+                                'mediaType' => 'image/jpeg',
+                                'uri' => 'https://iiif.elifesciences.org/journal-cms:editor-images/image-20180427145110-1.jpeg/full/full/0/default.jpg',
+                                'filename' => 'image-20180427145110-1.jpeg',
+                            ],
+                            'size' => [
+                                'width' => 2000,
+                                'height' => 2000,
+                            ],
+                            'focalPoint' => [
+                                'x' => 50,
+                                'y' => 50,
+                            ],
+                        ],
+                        'title' => 'A nice picture of a field. Courtesy of <a href="https://www.pexels.com/photo/biology-blur-close-up-dragonflies-287361/">Pexels</a>.',
+                    ],
+                ],
+                "<figure class=\"image\"><img alt=\"\" data-fid=\"1\" data-uuid=\"UUID\" height=\"2000\" src=\"/sites/default/files/editor-images/image-20180427145110-1.jpeg\" width=\"2000\" />
 <figcaption>A nice picture of a field. Courtesy of <a href=\"https://www.pexels.com/photo/biology-blur-close-up-dragonflies-287361/\">Pexels</a>.</figcaption>
 </figure>",
+                [
+                    'public://sites/default/files/editor-images/image-20180427145110-1.jpeg' => 'image/jpeg',
+                ],
             ],
             'multiple tables' => [
                 [

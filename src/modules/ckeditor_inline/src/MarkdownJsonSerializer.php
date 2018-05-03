@@ -126,7 +126,13 @@ final class MarkdownJsonSerializer implements NormalizerInterface
                             default:
                                 $ext = 'jpg';
                         }
-                        return [
+                        $caption = null;
+                        if ($figure->find('figcaption')) {
+                            /** @var \PHPHtmlParser\Dom\HtmlNode $caption */
+                            $captionNode = $dom->find('figcaption')[0];
+                            $caption = trim($captionNode->innerHtml());
+                        }
+                        return array_filter([
                             'type' => 'image',
                             'image' => array_filter([
                                 'uri' => $uri,
@@ -145,7 +151,8 @@ final class MarkdownJsonSerializer implements NormalizerInterface
                                     'y' => 50,
                                 ],
                             ]),
-                        ];
+                            'title' => $caption,
+                        ]);
                     }
                 }
                 break;

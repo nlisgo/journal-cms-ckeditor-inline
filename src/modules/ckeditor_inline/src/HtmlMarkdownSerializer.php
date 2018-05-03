@@ -12,6 +12,7 @@ final class HtmlMarkdownSerializer implements NormalizerInterface
 
     private $htmlConverterConfig = [
         'header_style' => 'atx',
+        'italic_style' => '*',
     ];
 
     public function __construct(HtmlConverter $htmlConverter)
@@ -28,7 +29,7 @@ final class HtmlMarkdownSerializer implements NormalizerInterface
     public function normalize($object, $format = null, array $context = []) : string
     {
         $markdown = $this->htmlConverter->convert($this->cleanHtml($object));
-        return preg_replace('/(<\/table>)([^\s\n])/', '$1'.PHP_EOL.PHP_EOL.'$2', $markdown);
+        return preg_replace('/(<\/table>|<\/oembed>)([^\s\n])/', '$1'.PHP_EOL.PHP_EOL.'$2', $markdown);
     }
 
     private function cleanHtml(string $html) : string
@@ -50,7 +51,7 @@ final class HtmlMarkdownSerializer implements NormalizerInterface
         /** @var \PHPHtmlParser\Dom\HtmlNode $table */
         foreach ($dom->find('table') as $table) {
             $tableHtml = $table->outerHtml();
-            $newTableHtml = preg_replace('/\r?\n/', '', strip_tags($tableHtml, '<table><thead><tbody><th></th><tr><td><img>'));
+            $newTableHtml = preg_replace('/\r?\n/', '', strip_tags($tableHtml, '<table><thead><tbody><th></th><tr><td><img><strong><em><i><sub><sup>'));
 
             $replaces['pattern'][] = '~'.preg_quote($tableHtml).'~';
             $replaces['replacement'][] = $newTableHtml;
