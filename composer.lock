@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "db076d77eca9e8e41c67c4d888bd3539",
+    "content-hash": "1b489b46377e0b8ef33a29dbee6bcdbc",
     "packages": [
         {
             "name": "alchemy/zippy",
@@ -1425,6 +1425,66 @@
             }
         },
         {
+            "name": "drupal/autocomplete_deluxe",
+            "version": "1.0.0-beta1",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupal.org/project/autocomplete_deluxe",
+                "reference": "8.x-1.0-beta1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/autocomplete_deluxe-8.x-1.0-beta1.zip",
+                "reference": "8.x-1.0-beta1",
+                "shasum": "f59d928761a01a055c2240155a84b1d7286fe666"
+            },
+            "require": {
+                "drupal/core": "~8.0"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "branch-alias": {
+                    "dev-1.x": "1.x-dev"
+                },
+                "drupal": {
+                    "version": "8.x-1.0-beta1",
+                    "datestamp": "1502921644",
+                    "security-coverage": {
+                        "status": "not-covered",
+                        "message": "Beta releases are not covered by Drupal security advisories."
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "authors": [
+                {
+                    "name": "Edward Chan",
+                    "homepage": "https://www.drupal.org/user/1781334"
+                },
+                {
+                    "name": "edwardchiapet",
+                    "homepage": "https://www.drupal.org/user/2354784"
+                },
+                {
+                    "name": "mpriscella",
+                    "homepage": "https://www.drupal.org/user/2354820"
+                },
+                {
+                    "name": "sepgil",
+                    "homepage": "https://www.drupal.org/user/512828"
+                }
+            ],
+            "description": "Enhanced autocomplete using Jquery UI autocomplete.",
+            "homepage": "https://www.drupal.org/sandbox/edwardchan/2888186",
+            "support": {
+                "source": "http://cgit.drupalcode.org/autocomplete_deluxe",
+                "issues": "https://www.drupal.org/project/issues/2888186"
+            }
+        },
+        {
             "name": "drupal/config_installer",
             "version": "1.8.0",
             "source": {
@@ -2181,6 +2241,53 @@
             "homepage": "https://www.drupal.org/project/focal_point",
             "support": {
                 "source": "http://cgit.drupalcode.org/focal_point"
+            }
+        },
+        {
+            "name": "drupal/hide_revision_field",
+            "version": "1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupal.org/project/hide_revision_field",
+                "reference": "8.x-1.1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/hide_revision_field-8.x-1.1.zip",
+                "reference": "8.x-1.1",
+                "shasum": "572ad7ae8e442c8b8e7e51ec47483f5c1b035d7b"
+            },
+            "require": {
+                "drupal/core": "~8.0"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "branch-alias": {
+                    "dev-1.x": "1.x-dev"
+                },
+                "drupal": {
+                    "version": "8.x-1.1",
+                    "datestamp": "1463677947",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "NickWilde",
+                    "homepage": "https://www.drupal.org/user/3094661"
+                }
+            ],
+            "description": "Controls visibility of the revision field on content add/edit forms.",
+            "homepage": "https://www.drupal.org/project/hide_revision_field",
+            "support": {
+                "source": "http://cgit.drupalcode.org/hide_revision_field"
             }
         },
         {
@@ -5776,7 +5883,7 @@
                 "testing",
                 "web"
             ],
-            "time": "2018-01-07 17:25:05"
+            "time": "2018-01-07T17:25:05+00:00"
         },
         {
             "name": "behat/mink-browserkit-driver",
@@ -5948,7 +6055,7 @@
                 "testing",
                 "webdriver"
             ],
-            "time": "2018-01-07 19:17:08"
+            "time": "2018-01-07T19:17:08+00:00"
         },
         {
             "name": "doctrine/instantiator",
@@ -7862,6 +7969,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "drupal/autocomplete_deluxe": 10,
         "drupal/focal_point": 10
     },
     "prefer-stable": true,

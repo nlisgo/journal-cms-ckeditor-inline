@@ -5,14 +5,14 @@ $databases['default']['default'] = [
   'username' => 'drupal',
   'password' => 'drupal',
   'prefix' => '',
-  'host' => 'localhost',
+  'host' => 'mariadb',
   'port' => '3306',
   'namespace' => 'Drupal\\Core\\Database\\Driver\\mysql',
   'driver' => 'mysql',
 ];
 
 $settings['trusted_host_patterns'] = [
-  '^journal\-cms\.docker\.amazee\.io$',
+  '^ec2\-54\-145\-229\-16\.compute\-1\.amazonaws\.com$',
 ];
 
 $settings['file_private_path'] = './../private';

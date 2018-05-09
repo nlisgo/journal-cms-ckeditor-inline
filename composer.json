@@ -20,10 +20,12 @@
         "cweagans/composer-patches": "^1.6",
         "drupal-composer/drupal-scaffold": "^2.2",
         "drupal/admin_toolbar": "^1.23",
+        "drupal/autocomplete_deluxe": "^1.0@beta",
         "drupal/config_installer": "^1.7",
         "drupal/console": "^1.0.2",
         "drupal/core": "~8.5.1",
         "drupal/focal_point": "^1.0@beta",
+        "drupal/hide_revision_field": "^1.1",
         "drupal/jsonapi": "1.7",
         "drupal/jsonapi_file": "^1.1",
         "drush/drush": "^9.0.0",
@@ -53,8 +55,7 @@
     "autoload": {
         "classmap": [
             "scripts/composer/ScriptHandler.php"
-        ],
-        "files": ["load.environment.php"]
+        ]
     },
     "scripts": {
         "drupal-scaffold": "DrupalComposer\\DrupalScaffold\\Plugin::scaffold",
