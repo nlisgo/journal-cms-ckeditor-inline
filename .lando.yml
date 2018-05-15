@@ -1,0 +1,4 @@
+name: ckeditor-inline
+recipe: drupal8
+config:
+  webroot: web
