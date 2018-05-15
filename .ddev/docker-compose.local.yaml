@@ -1,0 +1,7 @@
+version: '3'
+
+services:
+  web:
+    environment:
+      - DDEV_ROUTER_HTTP_PORT=8000
+      - DDEV_ROUTER_HTTPS_PORT=8443
