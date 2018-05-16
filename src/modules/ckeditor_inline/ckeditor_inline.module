@@ -25,6 +25,9 @@ function ckeditor_inline_page_attachments(array &$attachments) {
     $attachments['#attached']['library'][] = 'ckeditor_inline/ckeditor_inline';
     $attachments['#attached']['drupalSettings']['pluginPath'] = '/' . drupal_get_path('module', 'ckeditor_inline') . '/ckeditor/plugins/';
   }
+  else {
+    $attachments['#attached']['library'][] = 'ckeditor_inline/ckeditor_inline_admin';
+  }
 }
 
 /**

@@ -5,4 +5,9 @@ ckeditor_inline:
     js/ckeditor_inline.js: {}
   css:
     theme:
-      css/ckeditor_inline.css: {} 
+      css/ckeditor_inline.css: {}
+
+ckeditor_inline_admin:
+  css:
+    theme:
+      css/ckeditor_inline_admin.css: {}
