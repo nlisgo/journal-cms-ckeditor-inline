@@ -1,0 +1,22 @@
+uuid: cbd891c9-85ea-4587-a614-b2c6279453fb
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.taxonomy_term.subjects.field_subject_id
+    - taxonomy.vocabulary.subjects
+id: taxonomy_term.subjects.default
+targetEntityType: taxonomy_term
+bundle: subjects
+mode: default
+content:
+  field_subject_id:
+    weight: 0
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+hidden:
+  description: true

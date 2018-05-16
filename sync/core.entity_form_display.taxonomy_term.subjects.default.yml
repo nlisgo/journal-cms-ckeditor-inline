@@ -1,0 +1,31 @@
+uuid: 619d6cc9-7ec1-4562-b12a-2d8a76b146e7
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.taxonomy_term.subjects.field_subject_id
+    - taxonomy.vocabulary.subjects
+id: taxonomy_term.subjects.default
+targetEntityType: taxonomy_term
+bundle: subjects
+mode: default
+content:
+  field_subject_id:
+    weight: 0
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  name:
+    type: string_textfield
+    weight: 1
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  description: true
+  path: true
