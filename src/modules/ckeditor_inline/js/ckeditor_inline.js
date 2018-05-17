@@ -8,12 +8,12 @@
     attach: function(context, settings) {
       
       // Make sure we have the body to process
-      if ($(' .node__content .field--name-body', context).length > 0) {
+      if ($('.node__content .field--name-body', context).length > 0) {
         
         // Takes in two CKEditor Node Lists containing images
         // and finds any uuid of images that are no longer
         // in the updated list (i.e. deleted)
-        function diff(original, updated) {
+        var diff = function(original, updated) {
           var deletedIds = [], ids = [], id, i;
           // Get array of ids in the updated list
           if (updated.count() > 0) {
@@ -34,7 +34,7 @@
             }
           }
           return deletedIds;
-        }
+        };
 
         CKEDITOR.plugins.addExternal('imagealign', settings.pluginPath + 'imagealign/');
         CKEDITOR.plugins.addExternal('elifebutton', settings.pluginPath + 'elifebutton/');
@@ -43,6 +43,7 @@
         var $content = $(' .node__content .field--name-body');
         var $title = $('.node__content .field--name-field-display-title');
         var $impact = $('.node__content .field--name-field-impact-statement');
+        var $body = $('body');
 
         $content.attr('contenteditable', true);
         $title.attr('contenteditable', true);
@@ -51,9 +52,9 @@
         var uuid = false, url, data, options, node_type;
 
         // Get UUID and node type from body tag
-        if ($('body').data('uuid') && $('body').data('node-type')) {
-          node_type = $('body').data('node-type');
-          uuid = $('body').data('uuid');
+        if ($body.data('uuid') && $body.data('node-type')) {
+          node_type = $body.data('node-type');
+          uuid = $body.data('uuid');
           url = '/jsonapi/node/' + node_type + '/' + uuid;
         }
 
@@ -100,7 +101,7 @@
           var titleEditor = $title.ckeditor(titleEditorOptions).editor;
           var impactEditor = $impact.ckeditor(titleEditorOptions).editor;
 
-          bodyEditor.on( 'instanceReady', function(ck) {
+          bodyEditor.on('instanceReady', function(ck) {
             var editable = bodyEditor.editable(), images = editable.find('img');
 
             // Remove items from context menus
@@ -109,7 +110,7 @@
             bodyEditor.removeMenuItem('copy');
             //bodyEditor.removeMenuItem('image');
 
-            console.log(bodyEditor.filter.allowedContent);
+            //console.log(bodyEditor.filter.allowedContent);
             
             // Insert a figure widget when image is uploaded with fid and uuid
             bodyEditor.widgets.registered.uploadimage.onUploaded = function(upload) {
@@ -147,7 +148,7 @@
             });
 
             // Save any changes when editor looses focus
-            bodyEditor.on('blur' , function(e){
+            bodyEditor.on('blur', function(e){
               images = editable.find('img');
               var fids = [];
               for (var i = 0; i < images.count(); i++) {
@@ -207,7 +208,7 @@
               // Get XHR and response.
               var data = e.data, xhr = data.fileLoader.xhr;
 
-              if (xhr.status == 201) { 
+              if (xhr.status === 201) {
                 // New file created so set attributes so they are
                 // available to the editor
                 var response = JSON.parse(xhr.responseText);
@@ -215,8 +216,9 @@
                 data.url = attr.url;
                 data.fid = attr.fid;
                 data.uuid = attr.uuid;
-                data.width = attr.field_image_width;
-                data.height = attr.field_image_height;
+                // Unable to retrieve the width and height at the moment.
+                // data.width = attr.field_image_width;
+                // data.height = attr.field_image_height;
               } else {
                 // File upload error
                 e.cancel();

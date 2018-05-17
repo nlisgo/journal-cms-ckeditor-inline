@@ -106,14 +106,17 @@ function ckeditor_inline_block_access(Block $block, string $operation, AccountIn
  * Hide body, display title and image fields if creating or editing an article.
  */
 function ckeditor_inline_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  if ($form_id == 'node_article_edit_form') {
-    $form['title']['widget'][0]['value']['#access'] = FALSE;
-    $form['field_content_json']['#disabled'] = TRUE;
-  }
+  if (in_array($form_id, ['node_article_form', 'node_article_edit_form'])) {
+    $form['actions']['submit']['#value'] = t('Edit post');
 
-  if ($form_id == 'node_article_form') {
-    $form['title']['widget'][0]['value']['#access'] = FALSE;
-    $form['field_content_json']['#access'] = FALSE;
+    if ($form_id == 'node_article_edit_form') {
+      $form['title']['widget'][0]['value']['#access'] = FALSE;
+    }
+
+    if ($form_id == 'node_article_form') {
+      $form['status']['#disabled'] = TRUE;
+      $form['title']['widget'][0]['value']['#access'] = FALSE;
+    }
   }
 }
 
