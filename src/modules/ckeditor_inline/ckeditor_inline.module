@@ -108,6 +108,7 @@ function ckeditor_inline_block_access(Block $block, string $operation, AccountIn
 function ckeditor_inline_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   if (in_array($form_id, ['node_article_form', 'node_article_edit_form'])) {
     $form['actions']['submit']['#value'] = t('Edit post');
+    $form['actions']['submit']['#submit'][] = '_ckeditor_inline_callback_submit';
 
     if ($form_id == 'node_article_edit_form') {
       $form['title']['widget'][0]['value']['#access'] = FALSE;
@@ -116,6 +117,19 @@ function ckeditor_inline_form_alter(&$form, FormStateInterface $form_state, $for
     if ($form_id == 'node_article_form') {
       $form['status']['#disabled'] = TRUE;
       $form['title']['widget'][0]['value']['#access'] = FALSE;
+    }
+  }
+}
+
+function _ckeditor_inline_callback_submit($form, FormStateInterface $form_state) {
+  $node = $form_state->getFormObject()->getEntity();
+  if ($node->id()) {
+    if ($node->access('view')) {
+      \Drupal::request()->query->remove('destination');
+      $form_state->setRedirect(
+        'entity.node.canonical',
+        ['node' => $node->id()]
+      );
     }
   }
 }
