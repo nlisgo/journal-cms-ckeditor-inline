@@ -239,6 +239,56 @@ class MarkdownJsonSerializerTest extends \PHPUnit\Framework\TestCase
                     'Single paragraph',
                 ]),
             ],
+            'questions' => [
+                [
+                    [
+                        'type' => 'question',
+                        'question' => 'Do you like my question?',
+                        'answer' => [
+                            [
+                                'type' => 'paragraph',
+                                'text' => 'This is an answer to the question.',
+                            ],
+                            [
+                                'type' => 'paragraph',
+                                'text' => 'This is an extended answer.',
+                            ],
+                        ],
+                    ],
+                    [
+                        'type' => 'quote',
+                        'text' => [
+                            [
+                                'type' => 'paragraph',
+                                'text' => 'Quote',
+                            ],
+                        ],
+                    ],
+                    [
+                        'type' => 'paragraph',
+                        'text' => 'This is not an answer.',
+                    ],
+                    [
+                        'type' => 'question',
+                        'question' => 'Next question?',
+                        'answer' => [
+                            [
+                                'type' => 'paragraph',
+                                'text' => 'OK!',
+                            ],
+                        ],
+                    ],
+                ],
+                $this->lines([
+                    '# Question: Do you like my question?',
+                    'This is an answer to the question.',
+                    'This is an extended answer.',
+                    '> Quote',
+                    'This is not an answer.',
+                    '**Question: Next question?**',
+                    'OK!',
+                ], 2),
+            ],
             'preserve hierarchy' => [
                 [
                     [

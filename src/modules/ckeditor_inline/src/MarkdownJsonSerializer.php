@@ -40,7 +40,7 @@ final class MarkdownJsonSerializer implements NormalizerInterface
             }
         }
 
-        return $this->implementHierarchy($nodes);
+        return $this->implementHierarchy($this->implementQuestions($nodes));
     }
 
     private function resetDepthOffset()
@@ -192,6 +192,42 @@ final class MarkdownJsonSerializer implements NormalizerInterface
         }
 
         return null;
+    }
+
+    private function implementQuestions(array $nodes) : array
+    {
+        $question_found = false;
+        $new_nodes = [];
+        for ($i = 0; $i < count($nodes); $i++) {
+            $node = $nodes[$i];
+            if ($node['type'] === 'section' && preg_match('~^Question: (?P<question>.+)$~i', $node['title'], $match)) {
+                $question_found = true;
+                $new_nodes[] = [
+                    'type' => 'question',
+                    'question' => $match['question'],
+                    'answer' => [],
+                ];
+                continue;
+            }
+            elseif ($node['type'] === 'paragraph') {
+                if (preg_match('~^<strong>Question: (?P<question>.+)</strong>$~i', $node['text'], $match)) {
+                    $question_found = true;
+                    $new_nodes[] = [
+                        'type' => 'question',
+                        'question' => $match['question'],
+                        'answer' => [],
+                    ];
+                    continue;
+                }
+                elseif ($question_found) {
+                    $new_nodes[count($new_nodes)-1]['answer'][] = $node;
+                    continue;
+                }
+            }
+            $new_nodes[] = $node;
+            $question_found = false;
+        }
+        return $new_nodes;
     }
 
     private function implementHierarchy(array $nodes) : array

@@ -140,6 +140,26 @@ class HtmlMarkdownSerializerTest extends \PHPUnit\Framework\TestCase
                     '<p>Single paragraph</p>',
                 ]),
             ],
+            'questions' => [
+                $this->lines([
+                    '# Question: Do you like my question?',
+                    'This is an answer to the question.',
+                    'This is an extended answer.',
+                    '> Quote',
+                    'This is not an answer.',
+                    '**Question: Next question?**',
+                    'OK!',
+                ], 2),
+                $this->lines([
+                    '<h1>Question: Do you like my question?</h1>',
+                    '<p>This is an answer to the question.</p>',
+                    '<p>This is an extended answer.</p>',
+                    '<blockquote>Quote</blockquote>',
+                    '<p>This is not an answer.</p>',
+                    '<p><strong>Question: Next question?</strong></p>',
+                    '<p>OK!</p>',
+                ]),
+            ],
             'preserve hierarchy' => [
                 $this->lines([
                     'Paragraph 1.',

@@ -239,6 +239,56 @@ class HtmlJsonSerializerTest extends \PHPUnit\Framework\TestCase
                     '<p>Single paragraph</p>',
                 ]),
             ],
+            'questions' => [
+                [
+                    [
+                        'type' => 'question',
+                        'question' => 'Do you like my question?',
+                        'answer' => [
+                            [
+                                'type' => 'paragraph',
+                                'text' => 'This is an answer to the question.',
+                            ],
+                            [
+                                'type' => 'paragraph',
+                                'text' => 'This is an extended answer.',
+                            ],
+                        ],
+                    ],
+                    [
+                        'type' => 'quote',
+                        'text' => [
+                            [
+                                'type' => 'paragraph',
+                                'text' => 'Quote',
+                            ],
+                        ],
+                    ],
+                    [
+                        'type' => 'paragraph',
+                        'text' => 'This is not an answer.',
+                    ],
+                    [
+                        'type' => 'question',
+                        'question' => 'Next question?',
+                        'answer' => [
+                            [
+                                'type' => 'paragraph',
+                                'text' => 'OK!',
+                            ],
+                        ],
+                    ],
+                ],
+                $this->lines([
+                    '<h1>Question: Do you like my question?</h1>',
+                    '<p>This is an answer to the question.</p>',
+                    '<p>This is an extended answer.</p>',
+                    '<blockquote>Quote</blockquote>',
+                    '<p>This is not an answer.</p>',
+                    '<p><strong>Question: Next question?</strong></p>',
+                    '<p>OK!</p>',
+                ]),
+            ],
             'preserve hierarchy' => [
                 [
                     [
