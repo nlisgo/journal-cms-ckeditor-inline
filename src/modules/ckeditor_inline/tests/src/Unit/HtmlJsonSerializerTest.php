@@ -121,10 +121,17 @@ class HtmlJsonSerializerTest extends \PHPUnit\Framework\TestCase
                         ],
                         'title' => 'A nice picture of a field. Courtesy of <a href="https://www.pexels.com/photo/biology-blur-close-up-dragonflies-287361/">Pexels</a>.',
                     ],
+                    [
+                        'type' => 'paragraph',
+                        'text' => 'Trailing paragraph',
+                    ],
                 ],
-                "<figure class=\"image\"><img alt=\"\" data-fid=\"1\" data-uuid=\"UUID\" height=\"2000\" src=\"/sites/default/files/editor-images/image-20180427145110-1.jpeg\" width=\"2000\" />
-<figcaption>A nice picture of a field. Courtesy of <a href=\"https://www.pexels.com/photo/biology-blur-close-up-dragonflies-287361/\">Pexels</a>.</figcaption>
-</figure>",
+                $this->lines([
+                    '<figure class="image"><img alt="" data-fid="1" data-uuid="UUID" height="2000" src="/sites/default/files/editor-images/image-20180427145110-1.jpeg" width="2000" />',
+                    '<figcaption>A nice picture of a field. Courtesy of <a href="https://www.pexels.com/photo/biology-blur-close-up-dragonflies-287361/">Pexels</a>.</figcaption>',
+                    '</figure>'.PHP_EOL,
+                    '<p>Trailing paragraph</p>',
+                ]),
                 [
                     'public://sites/default/files/editor-images/image-20180427145110-1.jpeg' => 'image/jpeg',
                 ],
