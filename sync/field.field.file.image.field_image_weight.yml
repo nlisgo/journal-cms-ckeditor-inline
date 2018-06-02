@@ -1,0 +1,23 @@
+uuid: 115d2991-05db-4502-b33c-7d786c30a6d0
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.file.field_image_weight
+    - file_entity.type.image
+id: file.image.field_image_weight
+field_name: field_image_weight
+entity_type: file
+bundle: image
+label: Weight
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer
